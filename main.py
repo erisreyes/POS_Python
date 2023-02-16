@@ -68,6 +68,18 @@ class POS:
 
         self.checkout_button = ttk.Button(cart_frame, text="Checkout", command=self.checkout)
         self.checkout_button.grid(row=2, column=0, padx=5, pady=5)
+
+        # Create product list section and get all products
+        product_list_frame = ttk.LabelFrame(master, text="Product List")
+        product_list_frame.grid(row=2, column=0, padx=10, pady=10)
+
+        self.product_listbox = tk.Listbox(product_list_frame, height=10, width=40)
+        self.product_listbox.grid(row=0, column=0, padx=5, pady=5)
+
+        # Add products to listbox
+        for row in self.c.execute('SELECT * FROM products'):
+            self.product_listbox.insert(tk.END, f"{row[1]} - ${row[2]:.2f} - {row[3]} in stock")
+
         
         # Initialize cart and total amount
         self.cart = []
