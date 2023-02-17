@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+from tkinter import messagebox
 
 import sqlite3
 
@@ -9,7 +10,6 @@ class POS:
     def __init__(self, master):
         self.master = master
         master.title(" POS")
-        # master.geometry("1400x1050")
 
         # Connect to SQLite database
         self.conn = sqlite3.connect('products.db')
@@ -85,34 +85,23 @@ class POS:
         # Initialize cart and total amount
         self.cart = []
         self.total_amount = 0.0
-        
+
     def add_to_cart(self):
-        
-         # Get selected product from product_listbox
+        # Get selected product from product_listbox
         product = self.product_listbox.get(tk.ACTIVE)
-            
+
         # Extract product name, price and quantity from selected product string
         name, price, quantity = product.split(" - ")
-        
+
+        # Check if the product is already in the cart
+        for item in self.cart_listbox.get(0, tk.END):
+            if item.startswith(name):
+                # If the product is already in the cart, show an error message
+                messagebox.showerror("Error", "Product is already in cart.")
+                return
+
         # Append product information to cart_listbox
         self.cart_listbox.insert(tk.END, f"{name} - {price}")
-
-       
-        
-        # # Get quantity from input field and add item to cart
-        # quantity_input = int(self.quantity_entry.get())
-        # if quantity_input > quantity:
-        #     tk.messagebox.showerror("Error", f"Only {quantity} {name} in stock")
-        #     return
-        # self.cart.append((name, price, quantity_input))
-        
-        # # Update cart and total amount display
-        # self.cart_listbox.insert(tk.END, f"{name} x {quantity_input}")
-        # self.total_amount += quantity_input * price
-        # self.total_amount_label.config(text=f"${self.total_amount:.2f}")
-        
-        # # Clear input field
-        # self.quantity_entry.delete(0, tk.END)
         
     def checkout(self):
         # Generate receipt and clear cart and total amount
