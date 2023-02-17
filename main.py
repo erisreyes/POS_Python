@@ -8,7 +8,8 @@ import sqlite3
 class POS:
     def __init__(self, master):
         self.master = master
-        master.title("GenTech POS")
+        master.title(" POS")
+        # master.geometry("1400x1050")
 
         # Connect to SQLite database
         self.conn = sqlite3.connect('products.db')
@@ -48,8 +49,8 @@ class POS:
         button_frame = ttk.Frame(master)
         button_frame.grid(row=1, column=0, padx=10, pady=10, sticky=tk.W)
 
-        self.add_button = ttk.Button(button_frame, text="Create Product", command=self.add_product)
-        self.add_button.grid(row=0, column=0, padx=5, pady=5)
+        self.create_button = ttk.Button(button_frame, text="Create Product", command=self.create_product)
+        self.create_button.grid(row=0, column=0, padx=5, pady=5)
 
         self.add_button = ttk.Button(button_frame, text="Add to Cart", command=self.add_to_cart)
         self.add_button.grid(row=0, column=1, padx=5, pady=5)
@@ -86,21 +87,32 @@ class POS:
         self.total_amount = 0.0
         
     def add_to_cart(self):
-        # Get product and quantity from input fields
-        product = self.product_entry.get()
-        quantity = int(self.quantity_entry.get())
         
-        # Add item to cart and update total amount
-        self.cart.append((product, quantity))
-        self.total_amount += quantity * 10.0
+         # Get selected product from product_listbox
+        product = self.product_listbox.get(tk.ACTIVE)
+            
+        # Extract product name, price and quantity from selected product string
+        name, price, quantity = product.split(" - ")
         
-        # Update cart and total amount display
-        self.cart_listbox.insert(tk.END, f"{product} x {quantity}")
-        self.total_amount_label.config(text=f"${self.total_amount:.2f}")
+        # Append product information to cart_listbox
+        self.cart_listbox.insert(tk.END, f"{name} - {price}")
+
+       
         
-        # Clear input fields
-        self.product_entry.delete(0, tk.END)
-        self.quantity_entry.delete(0, tk.END)
+        # # Get quantity from input field and add item to cart
+        # quantity_input = int(self.quantity_entry.get())
+        # if quantity_input > quantity:
+        #     tk.messagebox.showerror("Error", f"Only {quantity} {name} in stock")
+        #     return
+        # self.cart.append((name, price, quantity_input))
+        
+        # # Update cart and total amount display
+        # self.cart_listbox.insert(tk.END, f"{name} x {quantity_input}")
+        # self.total_amount += quantity_input * price
+        # self.total_amount_label.config(text=f"${self.total_amount:.2f}")
+        
+        # # Clear input field
+        # self.quantity_entry.delete(0, tk.END)
         
     def checkout(self):
         # Generate receipt and clear cart and total amount
@@ -114,7 +126,7 @@ class POS:
         self.cart_listbox.delete(0, tk.END)
         self.total_amount_label.config(text="$0.00")
 
-    def add_product(self):
+    def create_product(self):
         # Get product info from input fields
         name = self.product_entry.get()
         price = float(self.price_entry.get())
@@ -131,4 +143,20 @@ class POS:
 
 root = tk.Tk()
 pos = POS(root)
+
+# set the dimensions of the window
+window_width = 730
+window_height = 800
+
+# get the screen dimensions
+screen_width = root.winfo_screenwidth()
+screen_height = root.winfo_screenheight()
+
+# calculate the coordinates of the top left corner of the window
+x = (screen_width - window_width) // 2
+y = (screen_height - window_height) // 2
+
+# set the geometry of the window to center it on the screen
+root.geometry(f"{window_width}x{window_height}+{x}+{y}")
+
 root.mainloop()
