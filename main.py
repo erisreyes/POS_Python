@@ -15,16 +15,6 @@ class POS:
         self.conn = sqlite3.connect('products.db')
         self.c = self.conn.cursor()
 
-        # Create products table if it doesn't exist
-        self.c.execute('''
-            CREATE TABLE IF NOT EXISTS products (
-                id INTEGER PRIMARY KEY,
-                name TEXT NOT NULL,
-                price REAL NOT NULL,
-                quantity INTEGER NOT NULL
-            )
-        ''')
-        self.conn.commit()
         
         # Create product input section
         product_frame = ttk.LabelFrame(master, text="Product Information")
@@ -93,15 +83,18 @@ class POS:
         # Extract product name, price and quantity from selected product string
         name, price, quantity = product.split(" - ")
 
+        quantity_cart = 1
+
         # Check if the product is already in the cart
         for item in self.cart_listbox.get(0, tk.END):
             if item.startswith(name):
+                print(quantity_cart)
                 # If the product is already in the cart, show an error message
-                messagebox.showerror("Error", "Product is already in cart.")
+                # messagebox.showerror("Error", "Product is already in cart.")
                 return
 
         # Append product information to cart_listbox
-        self.cart_listbox.insert(tk.END, f"{name} - {price}")
+        self.cart_listbox.insert(tk.END, f"{name} - {price} @ {quantity_cart}")
         
     def checkout(self):
         # Generate receipt and clear cart and total amount
